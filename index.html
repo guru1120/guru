@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitGuide Pro | Virtual Personal Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .goal-card {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-5px);
+            border-bottom-color: var(--primary);
+        }
+
+        .goal-card.selected {
+            border-bottom-color: var(--secondary);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .exercise-card {
+            transition: all 0.2s ease;
+        }
+
+        .exercise-card:hover {
+            transform: scale(1.03);
+        }
+
+        .progress-bar {
+            height: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .animated-bg {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { background-color: #e2e8f0; }
+            50% { background-color: #cbd5e1; }
+            100% { background-color: #e2e8f0; }
+        }
+
+        @media (max-width: 768px) {
+            .workout-day-column {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="https://placehold.co/50x50" alt="FitGuide Pro logo - abstract dumbbell icon in blue and green" class="h-10 w-10">
+                <h1 class="text-2xl font-bold text-blue-600">FitGuide<span class="text-emerald-500">Pro</span></h1>
+            </div>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-8">
+                    <li><a href="#" class="text-slate-600 hover:text-blue-600 font-medium">Home</a></li>
+                    <li><a href="#" class="text-slate-600 hover:text-blue-600 font-medium">Features</a></li>
+                    <li><a href="#" class="text-slate-600 hover:text-blue-600 font-medium">About</a></li>
+                    <li><a href="#" class="text-slate-600 hover:text-blue-600 font-medium">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="md:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <section class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4 text-slate-800">Your Virtual Personal Trainer</h2>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Get customized workout plans tailored to your fitness goals with AI-powered guidance.
+                Answer a few questions and we'll create your perfect training program.
+            </p>
+        </section>
+
+        <section class="mb-16">
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 max-w-4xl mx-auto">
+                <h3 class="text-2xl font-semibold mb-6 text-slate-800">Select Your Primary Fitness Goal</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="goal-card bg-white p-6 rounded-lg shadow-sm border cursor-pointer" onclick="selectGoal('weight-loss')">
+                        <div class="flex justify-center mb-4">
+                            <img src="https://placehold.co/120x120" alt="Person running on a treadmill with fitness tracker showing calories burned" class="h-24 w-24 rounded-full object-cover">
+                        </div>
+                        <h4 class="text-xl font-semibold text-center mb-2">Weight Loss</h4>
+                        <p class="text-slate-600 text-center">Burn fat with cardio and metabolism-boosting workouts</p>
+                    </div>
+                    
+                    <div class="goal-card bg-white p-6 rounded-lg shadow-sm border cursor-pointer" onclick="selectGoal('muscle-gain')">
+                        <div class="flex justify-center mb-4">
+                            <img src="https://placehold.co/120x120" alt="Muscular person lifting heavy weights in the gym" class="h-24 w-24 rounded-full object-cover">
+                        </div>
+                        <h4 class="text-xl font-semibold text-center mb-2">Muscle Building</h4>
+                        <p class="text-slate-600 text-center">Increase strength and muscle mass with targeted training</p>
+                    </div>
+                    
+                    <div class="goal-card bg-white p-6 rounded-lg shadow-sm border cursor-pointer" onclick="selectGoal('general-fitness')">
+                        <div class="flex justify-center mb-4">
+                            <img src="https://placehold.co/120x120" alt="Group of diverse people doing yoga outdoors in a park" class="h-24 w-24 rounded-full object-cover">
+                        </div>
+                        <h4 class="text-xl font-semibold text-center mb-2">General Fitness</h4>
+                        <p class="text-slate-600 text-center">Improve overall health with balanced exercise routines</p>
+                    </div>
+                </div>
+                
+                <div class="mt-8" id="experience-level-section" style="display: none;">
+                    <h3 class="text-2xl font-semibold mb-6 text-slate-800">Select Your Experience Level</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="goal-card bg-white p-6 rounded-lg shadow-sm border cursor-pointer" onclick="selectExperience('beginner')">
+                            <div class="flex justify-center mb-4">
+                                <div class="h-24 w-24 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h4 class="text-xl font-semibold text-center mb-2">Beginner</h4>
+                            <p class="text-slate-600 text-center">New to structured exercise or returning after a break</p>
+                        </div>
+                        
+                        <div class="goal-card bg-white p-6 rounded-lg shadow-sm border cursor-pointer" onclick="selectExperience('intermediate')">
+                            <div class="flex justify-center mb-4">
+                                <div class="h-24 w-24 rounded-full bg-emerald-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h4 class="text-xl font-semibold text-center mb-2">Intermediate</h4>
+                            <p class="text-slate-600 text-center">Some experience with regular workouts (6+ months)</p>
+                        </div>
+                        
+                        <div class="goal-card bg-white p-6 rounded-lg shadow-sm border cursor-pointer" onclick="selectExperience('advanced')">
+                            <div class="flex justify-center mb-4">
+                                <div class="h-24 w-24 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h4 class="text-xl font-semibold text-center mb-2">Advanced</h4>
+                            <p class="text-slate-600 text-center">Consistent training for 2+ years with good technique</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8" id="days-per-week-section" style="display: none;">
+                    <h3 class="text-2xl font-semibold mb-6 text-slate-800">How Many Days Can You Train Each Week?</h3>
+                    
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="selectDaysPerWeek(3)" class="px-6 py-3 bg-white border rounded-lg shadow-sm hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            3 Days
+                        </button>
+                        <button onclick="selectDaysPerWeek(4)" class="px-6 py-3 bg-white border rounded-lg shadow-sm hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            4 Days
+                        </button>
+                        <button onclick="selectDaysPerWeek(5)" class="px-6 py-3 bg-white border rounded-lg shadow-sm hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            5 Days
+                        </button>
+                        <button onclick="selectDaysPerWeek(6)" class="px-6 py-3 bg-white border rounded-lg shadow-sm hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            6 Days
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="workout-plan-section" style="display: none;">
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-2xl font-semibold text-slate-800">Your Customized <span id="goal-title"></span> Workout Plan</h3>
+                    <button onclick="resetSelections()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600">Start Over</button>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="text-lg font-medium mb-2 text-slate-700">Your Progress</h4>
+                    <div class="w-full bg-slate-200 rounded-full h-3">
+                        <div id="progress-bar" class="progress-bar bg-emerald-500 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm text-slate-600">
+                        <span id="completed-count">0 completed</span>
+                        <span id="total-count">0 workouts</span>
+                    </div>
+                </div>
+                
+                <div id="weekly-plan-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-16 bg-gradient-to-r from-blue-600 to-emerald-500 rounded-xl shadow-lg text-white p-8 md:p-12">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Transform Your Fitness Journey?</h2>
+                <p class="text-lg mb-8 text-blue-100">Get personalized coaching, nutrition plans, and progress tracking with our premium membership.</p>
+                <button class="px-8 py-4 bg-white rounded-lg text-blue-600 font-bold hover:bg-blue-50 transition duration-300 shadow-md">
+                    Start Your Free Trial
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white py-12 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="https://placehold.co/40x40" alt="FitGuide Pro logo - abstract dumbbell icon in white" class="h-8 w-8">
+                        <h4 class="text-xl font-bold">FitGuide<span class="text-emerald-400">Pro</span></h4>
+                    </div>
+                    <p class="text-slate-300">Your AI-powered virtual trainer for customized workout plans.</p>
+                </div>
+                
+                <div>
+                    <h5 class="text-lg font-semibold mb-4">Features</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-300 hover:text-white">Workout Plans</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Exercise Library</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Progress Tracking</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Nutrition Guidance</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="text-lg font-semibold mb-4">Company</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-300 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Careers</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Blog</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Press</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="text-lg font-semibold mb-4">Support</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-slate-300 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Community</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-slate-300 hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400">
+                <p>&copy; 2023 FitGuide Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // User selections
+        let selectedGoal = null;
+        let selectedExperience = null;
+        let selectedDaysPerWeek = null;
+        let completedWorkouts = 0;
+        let totalWorkouts = 0;
+
+        // Exercise database
+        const exerciseDB = {
+            'weight-loss': {
+                'beginner': {
+                    3: [
+                        { day: 'Day 1', type: 'Cardio', exercises: [
+                            { name: 'Brisk Walking', sets: '30-45 min', completed: false },
+                            { name: 'Bodyweight Squats', sets: '3x12', completed: false },
+                            { name: 'Push-ups (modified if needed)', sets: '3x8', completed: false }
+                        ]},
+                        { day: 'Day 2', type: 'Active Recovery', exercises: [
+                            { name: 'Stretching Routine', sets: '20 min', completed: false },
+                            { name: 'Walking', sets: '30 min', completed: false }
+                        ]},
+                        { day: 'Day 3', type: 'Cardio + Core', exercises: [
+                            { name: 'Cycling', sets: '30 min', completed: false },
+                            { name: 'Plank', sets: '3x30 sec', completed: false },
+                            { name: 'Bicycle Crunches', sets: '3x12', completed: false }
+                        ]}
+                    ],
+                    4: [
+                        { day: 'Day 1', type: 'Cardio', exercises: [
+                            { name: 'Treadmill Incline Walk', sets: '30 min', completed: false },
+                            { name: 'Bodyweight Lunges', sets: '3x10 each leg', completed: false }
+                        ]},
+                        { day: 'Day 2', type: 'Full Body', exercises: [
+                            { name: 'Bodyweight Squats', sets: '3x12', completed: false },
+                            { name: 'Push-ups', sets: '3x8', completed: false },
+                            { name: 'Glute Bridges', sets: '3x12', completed: false }
+                        ]},
+                        { day: 'Day 3', type: 'Cardio Intervals', exercises: [
+                            { name: 'Jump Rope', sets: '10x30 sec', completed: false },
+                            { name: 'Mountain Climbers', sets: '3x30 sec', completed: false }
+                        ]},
+                        { day: 'Day 4', type: 'Active Recovery', exercises: [
+                            { name: 'Yoga Flow', sets: '30 min', completed: false }
+                        ]}
+                    ]
+                },
+                'intermediate': {
+                    4: [
+                        { day: 'Day 1', type: 'HIIT', exercises: [
+                            { name: 'Burpees', sets: '40 sec work, 20 sec rest x 8', completed: false },
+                            { name: 'Jump Squats', sets: '3x15', completed: false },
+                            { name: 'Kettlebell Swings', sets: '4x15', completed: false }
+                        ]},
+                        { day: 'Day 2', type: 'Active Recovery', exercises: [
+                            { name: 'Swimming', sets: '45 min', completed: false }
+                        ]},
+                        { day: 'Day 3', type: 'Circuit Training', exercises: [
+                            { name: 'Dumbbell Thrusters', sets: '4x10', completed: false },
+                            { name: 'Battle Ropes', sets: '40 sec work, 20 sec rest x 6', completed: false },
+                            { name: 'Box Jumps', sets: '3x10', completed: false }
+                        ]},
+                        { day: 'Day 4', type: 'Steady Cardio', exercises: [
+                            { name: 'Rowing Machine', sets: '30 min', completed: false },
+                            { name: 'TRX Rows', sets: '3x12', completed: false }
+                        ]}
+                    ],
+                    5: [
+                        // Additional plans would be here
+                    ]
+                }
+            },
+            'muscle-gain': {
+                'beginner': {
+                    3: [
+                        { day: 'Day 1', type: 'Upper Body', exercises: [
+                            { name: 'Push-ups', sets: '3x8', completed: false },
+                            { name: 'Dumbbell Rows', sets: '3x10', completed: false },
+                            { name: 'Shoulder Press', sets: '3x8', completed: false }
+                        ]},
+                        { day: 'Day 2', type: 'Rest', exercises: []},
+                        { day: 'Day 3', type: 'Lower Body', exercises: [
+                            { name: 'Bodyweight Squats', sets: '3x12', completed: false },
+                            { name: 'Glute Bridges', sets: '3x15', completed: false },
+                            { name: 'Calf Raises', sets: '3x15', completed: false }
+                        ]}
+                    ],
+                    4: [
+                        // Additional plans would be here
+                    ]
+                },
+                'intermediate': {
+                    4: [
+                        { day: 'Day 1', type: 'Push Day', exercises: [
+                            { name: 'Bench Press', sets: '4x8', completed: false },
+                            { name: 'Incline Dumbbell Press', sets: '3x10', completed: false },
+                            { name: 'Triceps Dips', sets: '3x12', completed: false }
+                        ]},
+                        { day: 'Day 2', type: 'Pull Day', exercises: [
+                            { name: 'Pull-ups', sets: '3x8', completed: false },
+                            { name: 'Bent Over Rows', sets: '4x8', completed: false },
+                            { name: 'Face Pulls', sets: '3x12', completed: false }
+                        ]},
+                        { day: 'Day 3', type: 'Leg Day', exercises: [
+                            { name: 'Back Squats', sets: '4x8', completed: false },
+                            { name: 'Romanian Deadlifts', sets: '4x8', completed: false },
+                            { name: 'Bulgarian Split Squats', sets: '3x10', completed: false }
+                        ]},
+                        { day: 'Day 4', type: 'Rest', exercises: []}
+                    ],
+                    5: [
+                        // Additional plans would be here
+                    ]
+                }
+            },
+            'general-fitness': {
+                'beginner': {
+                    3: [
+                        { day: 'Day 1', type: 'Full Body', exercises: [
+                            { name: 'Bodyweight Squats', sets: '3x10', completed: false },
+                            { name: 'Push-ups', sets: '3x8', completed: false },
+                            { name: 'Plank', sets: '3x30 sec', completed: false }
+                        ]},
+                        { day: 'Day 2', type: 'Active Rest', exercises: [
+                            { name: 'Walking', sets: '30 min', completed: false },
+                            { name: 'Stretching', sets: '15 min', completed: false }
+                        ]},
+                        { day: 'Day 3', type: 'Full Body', exercises: [
+                            { name: 'Lunges', sets: '3x8 each leg', completed: false },
+                            { name: 'Superman', sets: '3x12', completed: false },
+                            { name: 'Bicycle Crunches', sets: '3x10', completed: false }
+                        ]}
+                    ],
+                    4: [
+                        // Additional plans would be here
+                    ]
+                },
+                'intermediate': {
+                    4: [
+                        { day: 'Day 1', type: 'Strength', exercises: [
+                            { name: 'Deadlifts', sets: '4x6', completed: false },
+                            { name: 'Pull-ups', sets: '3x8', completed: false },
+                            { name: 'Kettlebell Swings', sets: '3x15', completed: false }
+                        ]},
+                        { day: 'Day 2', type: 'Cardio', exercises: [
+                            { name: 'Running', sets: '30 min', completed: false },
+                            { name: 'Burpees', sets: '3x10', completed: false }
+                        ]},
+                        { day: 'Day 3', type: 'Mobility', exercises: [
+                            { name: 'Yoga Flow', sets: '30 min', completed: false }
+                        ]},
+                        { day: 'Day 4', type: 'Circuits', exercises: [
+                            { name: 'Sandbag Shouldering', sets: '4x8', completed: false },
+                            { name: 'TRX Rows', sets: '3x12', completed: false },
+                            { name: 'Box Jumps', sets: '3x10', completed: false }
+                        ]}
+                    ]
+                }
+            }
+        };
+
+        // DOM elements
+        const goalCards = document.querySelectorAll('.goal-card');
+        const experienceSection = document.getElementById('experience-level-section');
+        const daysPerWeekSection = document.getElementById('days-per-week-section');
+        const workoutPlanSection = document.getElementById('workout-plan-section');
+        const progressBar = document.getElementById('progress-bar');
+        const completedCount = document.getElementById('completed-count');
+        const totalCount = document.getElementById('total-count');
+        const weeklyPlanContainer = document.getElementById('weekly-plan-container');
+        const goalTitle = document.getElementById('goal-title');
+
+        // Event handlers
+        function selectGoal(goal) {
+            selectedGoal = goal;
+            highlightSelected(goalCards, goal);
+            
+            // Update the UI
+            experienceSection.style.display = 'block';
+            daysPerWeekSection.style.display = 'none';
+            workoutPlanSection.style.display = 'none';
+            
+            // Scroll to next section
+            experienceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function selectExperience(experience) {
+            selectedExperience = experience;
+            const experienceCards = document.querySelectorAll('#experience-level-section .goal-card');
+            highlightSelected(experienceCards, experience);
+            
+            // Update the UI
+            daysPerWeekSection.style.display = 'block';
+            workoutPlanSection.style.display = 'none';
+            
+            // Scroll to next section
+            daysPerWeekSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function selectDaysPerWeek(days) {
+            selectedDaysPerWeek = days;
+            
+            // Generate workout plan
+            generateWorkoutPlan();
+            
+            // Update the UI
+            workoutPlanSection.style.display = 'block';
+            
+            // Scroll to workout plan
+            workoutPlanSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetSelections() {
+            selectedGoal = null;
+            selectedExperience = null;
+            selectedDaysPerWeek = null;
+            
+            // Reset all selected card highlights
+            const allCards = document.querySelectorAll('.goal-card');
+            allCards.forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Hide sections
+            experienceSection.style.display = 'none';
+            daysPerWeekSection.style.display = 'none';
+            workoutPlanSection.style.display = 'none';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function highlightSelected(cards, selectedClass) {
+            cards.forEach(card => {
+                card.classList.remove('selected');
+                if (card.onclick.toString().includes(selectedClass)) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        function generateWorkoutPlan() {
+            if (!selectedGoal || !selectedExperience || !selectedDaysPerWeek) return;
+            
+            // Get the appropriate workout plan
+            const workoutPlan = exerciseDB[selectedGoal][selectedExperience][selectedDaysPerWeek];
+            if (!workoutPlan) return;
+            
+            // Update the title
+            const goalDisplayText = {
+                'weight-loss': 'Weight Loss',
+                'muscle-gain': 'Muscle Building',
+                'general-fitness': 'General Fitness'
+            };
+            goalTitle.textContent = goalDisplayText[selectedGoal];
+            
+            // Clear out any existing content
+            weeklyPlanContainer.innerHTML = '';
+            
+            // Reset completed workouts count
+            completedWorkouts = 0;
+            totalWorkouts = 0;
+            
+            // Create and append workout day cards
+            workoutPlan.forEach(day => {
+                const dayCard = document.createElement('div');
+                dayCard.className = `workout-day-column bg-white rounded-lg shadow-sm overflow-hidden ${
+                    day.type === 'Rest' ? 'border-l-4 border-gray-500' : 'border-l-4 border-blue-500'
+                }`;
+                
+                let exercisesHTML = '';
+                if (day.exercises && day.exercises.length > 0) {
+                    exercisesHTML = day.exercises.map(exercise => {
+                        totalWorkouts++;
+                        if (exercise.completed) completedWorkouts++;
+                        
+                        return `
+                            <div class="exercise-card p-4 mb-2 bg-slate-50 rounded-lg flex justify-between items-center ${
+                                exercise.completed ? 'border-l-4 border-emerald-500' : ''
+                            }">
+                                <div>
+                                    <h5 class="font-medium">${exercise.name}</h5>
+                                    <p class="text-sm text-slate-600">${exercise.sets}</p>
+                                </div>
+                                <button onclick="toggleExerciseCompletion(this)" 
+                                    class="w-6 h-6 rounded-full border flex items-center justify-center ${
+                                        exercise.completed ? 'bg-emerald-500 border-emerald-600 text-white' : 'border-slate-300'
+                                    }"
+                                    data-name="${exercise.name.replace(/'/g, '')}" 
+                                    data-day="${day.day}">
+                                    ${exercise.completed ? '✓' : ''}
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                }
+                
+                dayCard.innerHTML = `
+                    <div class="p-4 bg-slate-50 border-b">
+                        <h4 class="font-bold text-lg">${day.day}</h4>
+                        <p class="text-sm text-slate-600">${day.type}</p>
+                    </div>
+                    <div class="p-4">
+                        ${exercisesHTML || '<p class="text-center text-slate-500 py-4">Rest Day</p>'}
+                    </div>
+                `;
+                
+                weeklyPlanContainer.appendChild(dayCard);
+            });
+            
+            // Update progress bar
+            updateProgress();
+        }
+
+        function toggleExerciseCompletion(button) {
+            const exerciseName = button.getAttribute('data-name');
+            const dayName = button.getAttribute('data-day');
+            
+            if (button.innerText === '✓') {
+                // Mark as incomplete
+                button.innerText = '';
+                button.classList.remove('bg-emerald-500', 'border-emerald-600', 'text-white');
+                completedWorkouts--;
+            } else {
+                // Mark as complete
+                button.innerText = '✓';
+                button.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+                completedWorkouts++;
+            }
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const percentage = totalWorkouts > 0 ? Math.round((completedWorkouts / totalWorkouts) * 100) : 0;
+            progressBar.style.width = `${percentage}%`;
+            completedCount.textContent = `${completedWorkouts} completed`;
+            totalCount.textContent = `${totalWorkouts} workouts`;
+        }
+    </script>
+</body>
+</html>
